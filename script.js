@@ -210,3 +210,37 @@ document.getElementById('prev-song').addEventListener('click', () => {
         updatePlayer(songs[currentSongIndex]);
     }
 });
+
+const bottomPlayerDiv = document.getElementById('bottom-music-player');
+const playerTimeline = document.getElementById('player-timeline');
+const seekbar = document.getElementById('seekbar');
+
+// Expand on click
+bottomPlayerDiv.addEventListener('click', (e) => {
+    e.stopPropagation();
+    bottomPlayerDiv.classList.add('expanded');
+});
+
+// Collapse when clicking outside
+document.addEventListener('click', (e) => {
+    if (!bottomPlayerDiv.contains(e.target)) {
+        bottomPlayerDiv.classList.remove('expanded');
+    }
+});
+
+// Sync seekbar with current audio
+setInterval(() => {
+    const currentAudio = songs[currentSongIndex];
+    if (currentAudio && !currentAudio.paused) {
+        seekbar.max = currentAudio.duration;
+        seekbar.value = currentAudio.currentTime;
+    }
+}, 300);
+
+// Seek control
+seekbar.addEventListener('input', () => {
+    const currentAudio = songs[currentSongIndex];
+    if (currentAudio) {
+        currentAudio.currentTime = seekbar.value;
+    }
+});

@@ -697,15 +697,19 @@
         // Add bottom music player in index.html
         const bottomPlayer = document.createElement('div');
         bottomPlayer.id = 'bottom-music-player';
-    bottomPlayer.innerHTML = `
-<img id="player-song-img" src="" alt="Song Image">
-<div id="player-song-details">
-    <p id="player-song-title">Title</p>
-    
-</div>
-<button id="prev-song">⏮️</button>
-<button id="play-pause">▶️</button>
-<button id="next-song">⏭️</button>
+        bottomPlayer.innerHTML = `
+    <div id="player-main">
+        <img id="player-song-img" src="" alt="Song Image">
+        <div id="player-song-details">
+            <p id="player-song-title">Title</p>
+        </div>
+        <button id="prev-song">⏮️</button>
+        <button id="play-pause">▶️</button>
+        <button id="next-song">⏭️</button>
+    </div>
+    <div id="player-timeline" style="display: none; width: 100%;">
+        <input type="range" id="seekbar" value="0" step="1" min="0" style="width: 100%;">
+    </div>
 `;
         document.body.appendChild(bottomPlayer);
 
