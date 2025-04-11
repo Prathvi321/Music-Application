@@ -166,7 +166,15 @@ window.addEventListener('appinstalled', () => {
 });
 
 const songs = document.querySelectorAll('.Songs audio');
+
 let currentSongIndex = 0;
+let visibleSongs = getVisibleSongs();
+
+function getVisibleSongs() {
+    return Array.from(document.querySelectorAll('.Songs'))
+        .filter(songTile => songTile.style.display !== 'none')
+        .map(tile => tile.querySelector('audio'));
+}
 
 function updatePlayer(songElement) {
     const parent = songElement.closest('.Songs');
@@ -175,15 +183,22 @@ function updatePlayer(songElement) {
     document.getElementById('play-pause').innerText = '⏸️';
 }
 
-songs.forEach((audio, index) => {
+// Update visibleSongs whenever the search input changes
+document.getElementById('searchInput').addEventListener('input', () => {
+    visibleSongs = getVisibleSongs();
+});
+
+// Update currentSongIndex when a song is played
+document.querySelectorAll('.Songs audio').forEach((audio) => {
     audio.addEventListener('play', () => {
-        currentSongIndex = index;
+        visibleSongs = getVisibleSongs();
+        currentSongIndex = visibleSongs.indexOf(audio);
         updatePlayer(audio);
     });
 });
 
 document.getElementById('play-pause').addEventListener('click', () => {
-    const currentSong = songs[currentSongIndex];
+    const currentSong = visibleSongs[currentSongIndex];
     if (currentSong.paused) {
         currentSong.play();
         document.getElementById('play-pause').innerText = '⏸️';
@@ -194,22 +209,23 @@ document.getElementById('play-pause').addEventListener('click', () => {
 });
 
 document.getElementById('next-song').addEventListener('click', () => {
-    if (currentSongIndex < songs.length - 1) {
-        songs[currentSongIndex].pause();
+    if (currentSongIndex < visibleSongs.length - 1) {
+        visibleSongs[currentSongIndex].pause();
         currentSongIndex++;
-        songs[currentSongIndex].play();
-        updatePlayer(songs[currentSongIndex]);
+        visibleSongs[currentSongIndex].play();
+        updatePlayer(visibleSongs[currentSongIndex]);
     }
 });
 
 document.getElementById('prev-song').addEventListener('click', () => {
     if (currentSongIndex > 0) {
-        songs[currentSongIndex].pause();
+        visibleSongs[currentSongIndex].pause();
         currentSongIndex--;
-        songs[currentSongIndex].play();
-        updatePlayer(songs[currentSongIndex]);
+        visibleSongs[currentSongIndex].play();
+        updatePlayer(visibleSongs[currentSongIndex]);
     }
 });
+
 
 const bottomPlayerDiv = document.getElementById('bottom-music-player');
 const playerTimeline = document.getElementById('player-timeline');
@@ -242,5 +258,30 @@ seekbar.addEventListener('input', () => {
     const currentAudio = songs[currentSongIndex];
     if (currentAudio) {
         currentAudio.currentTime = seekbar.value;
+    }
+});
+
+installButton.addEventListener('click', () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(choiceResult => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+
+                // Request fullscreen after install prompt is accepted
+                const body = document.body;
+                if (body.requestFullscreen) {
+                    body.requestFullscreen();
+                } else if (body.webkitRequestFullscreen) {
+                    body.webkitRequestFullscreen();
+                } else if (body.msRequestFullscreen) {
+                    body.msRequestFullscreen();
+                }
+
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+        });
     }
 });
