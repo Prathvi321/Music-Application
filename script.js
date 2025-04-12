@@ -1,73 +1,171 @@
-// Updated script.js with lazy loading, mini player with progress bar, and integrated features
 const searchInput = document.getElementById('searchInput');
 const blogContainer = document.querySelector('.Songs-Container');
-const allSongs = Array.from(document.querySelectorAll('.Songs'));
-
-let songsPerPage = 15;
-let currentIndex = 0;
-let searchMode = false;
-let searchResults = [];
-
-function hideAllSongs() {
-    allSongs.forEach(song => {
-        song.style.display = 'none';
-    });
-}
-
-function loadMoreSongs(songList) {
-    const nextSongs = songList.slice(currentIndex, currentIndex + songsPerPage);
-    nextSongs.forEach(song => {
-        song.style.display = 'flex';
-    });
-    currentIndex += songsPerPage;
-}
-
-function resetAndLoadSongs(list) {
-    hideAllSongs();
-    currentIndex = 0;
-    loadMoreSongs(list);
-}
-
-function handleScroll() {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
-        if (searchMode) {
-            loadMoreSongs(searchResults);
-        } else {
-            loadMoreSongs(allSongs);
-        }
-    }
-}
-
-function getSearchResults(term) {
-    const searchWords = term.toLowerCase().split(' ').filter(word => word.trim() !== '');
-    return allSongs.filter(song => {
-        const keywords = song.dataset.keywords.toLowerCase();
-        const title = song.querySelector('p')?.textContent.toLowerCase() || '';
-        return searchWords.every(word => keywords.includes(word) || title.includes(word));
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    resetAndLoadSongs(allSongs);
-    window.addEventListener('scroll', handleScroll);
-});
 
 searchInput.addEventListener('input', function (e) {
-    const term = e.target.value;
-    if (term.trim() === '') {
-        searchMode = false;
-        resetAndLoadSongs(allSongs);
+    const searchTerm = e.target.value.toLowerCase();
+    const searchWords = searchTerm.split(' ').filter(word => word.trim() !== ''); // Split into words, remove empty words
+
+    const blogPosts = blogContainer.querySelectorAll('.Songs');
+
+    blogPosts.forEach(post => {
+        const keywords = post.dataset.keywords.toLowerCase();
+        const title = post.querySelector('h2') ? post.querySelector('h2').textContent.toLowerCase() : '';
+        const content = post.querySelector('p') ? post.querySelector('p').textContent.toLowerCase() : '';
+
+        let postMatches = false; // Flag to check if the post matches any search word
+
+        if (searchWords.length === 0) { // If no search words, show all posts
+            post.style.display = 'flex';
+            return;
+        }
+
+        searchWords.forEach(word => {
+            if (title.includes(word) || content.includes(word) || keywords.includes(word)) {
+                postMatches = true; // If any word matches, set the flag to true
+            }
+        });
+
+        if (postMatches) {
+            post.style.display = 'flex';
+        } else {
+            post.style.display = 'none';
+        }
+    });
+});
+const audioElements = document.querySelectorAll('audio');
+
+audioElements.forEach((audio, index) => {
+    audio.addEventListener('ended', () => {
+        const visibleAudios = Array.from(audioElements).filter(a => a.closest('.Songs').style.display !== 'none');
+        const currentAudioIndex = visibleAudios.indexOf(audio);
+        const nextAudio = visibleAudios[currentAudioIndex + 1];
+        if (nextAudio) {
+            nextAudio.play();
+        }
+    });
+});
+audioElements.forEach(audio => {
+    audio.addEventListener('play', () => {
+        audioElements.forEach(otherAudio => {
+            if (otherAudio !== audio) {
+                otherAudio.pause();
+            }
+        });
+    });
+});
+
+audioElements.forEach(audio => {
+    audio.addEventListener('ended', () => {
+        const visibleAudios = Array.from(audioElements).filter(a => a.closest('.Songs').style.display !== 'none');
+        const currentAudioIndex = visibleAudios.indexOf(audio);
+        const nextAudio = visibleAudios[currentAudioIndex + 1];
+        if (nextAudio) {
+            nextAudio.play();
+        } else if (visibleAudios.length > 0) {
+            visibleAudios[0].play(); // Loop back to the first visible audio
+        }
+    });
+});
+
+const uniqueSources = new Set();
+
+const songTiles = document.querySelectorAll('.Songs');
+songTiles.forEach(tile => {
+    const audio = tile.querySelector('audio');
+    const img = tile.querySelector('img');
+
+    const audioSrc = audio ? audio.src : null;
+    const imgSrc = img ? img.src : null;
+
+    if ((audioSrc && uniqueSources.has(audioSrc)) || (imgSrc && uniqueSources.has(imgSrc))) {
+        tile.style.display = 'none'; // Hide duplicate tiles
     } else {
-        searchMode = true;
-        searchResults = getSearchResults(term);
-        resetAndLoadSongs(searchResults);
+        if (audioSrc) uniqueSources.add(audioSrc);
+        if (imgSrc) uniqueSources.add(imgSrc);
     }
 });
 
-// Mini player & progress bar
-const bottomPlayerDiv = document.getElementById('bottom-music-player');
-const playerTimeline = document.getElementById('player-timeline');
-const seekbar = document.getElementById('seekbar');
+audioElements.forEach(audio => {
+    audio.addEventListener('play', () => {
+        const parentTile = audio.closest('.Songs');
+        if (parentTile) {
+            parentTile.style.transform = 'scale(1.05)';
+            parentTile.style.transition = 'transform 0.3s ease';
+            parentTile.style.color = 'blue'; // Change text color or any other detail color
+        }
+    });
+
+    audio.addEventListener('pause', () => {
+        const parentTile = audio.closest('.Songs');
+        if (parentTile) {
+            parentTile.style.transform = 'scale(1)';
+            parentTile.style.color = ''; // Reset to default color
+        }
+    });
+
+    audio.addEventListener('ended', () => {
+        const parentTile = audio.closest('.Songs');
+        if (parentTile) {
+            parentTile.style.transform = 'scale(1)';
+            parentTile.style.color = ''; // Reset to default color
+        }
+    });
+});
+
+// Register a service worker for PWA functionality
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').then(registration => {
+            console.log('ServiceWorker registered with scope:', registration.scope);
+        }).catch(error => {
+            console.error('ServiceWorker registration failed:', error);
+        });
+    });
+}
+
+// Add an install prompt for the PWA
+let deferredPrompt;
+const installButton = document.createElement('button');
+installButton.textContent = 'Install App';
+installButton.style.position = 'fixed';
+installButton.style.bottom = '20px';
+installButton.style.right = '20px';
+installButton.style.padding = '10px 20px';
+installButton.style.backgroundColor = '#007BFF';
+installButton.style.color = '#FFF';
+installButton.style.border = 'none';
+installButton.style.borderRadius = '5px';
+installButton.style.cursor = 'pointer';
+installButton.style.display = 'none'; // Initially hidden
+document.body.appendChild(installButton);
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installButton.style.display = 'block'; // Show the install button
+});
+
+installButton.addEventListener('click', () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(choiceResult => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+        });
+    }
+});
+
+// Hide the install button after the app is installed
+window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
+    installButton.style.display = 'none';
+});
+
+const songs = document.querySelectorAll('.Songs audio');
 
 let currentSongIndex = 0;
 let visibleSongs = getVisibleSongs();
@@ -83,11 +181,14 @@ function updatePlayer(songElement) {
     document.getElementById('player-song-img').src = parent.querySelector('img').src;
     document.getElementById('player-song-title').innerText = parent.querySelector('.songdetail').innerText;
     document.getElementById('play-pause').innerText = '⏸️';
-    document.getElementById('player-timeline').style.display = 'block';
-    seekbar.max = songElement.duration;
-    seekbar.value = songElement.currentTime;
 }
 
+// Update visibleSongs whenever the search input changes
+document.getElementById('searchInput').addEventListener('input', () => {
+    visibleSongs = getVisibleSongs();
+});
+
+// Update currentSongIndex when a song is played
 document.querySelectorAll('.Songs audio').forEach((audio) => {
     audio.addEventListener('play', () => {
         visibleSongs = getVisibleSongs();
@@ -125,54 +226,62 @@ document.getElementById('prev-song').addEventListener('click', () => {
     }
 });
 
+
+const bottomPlayerDiv = document.getElementById('bottom-music-player');
+const playerTimeline = document.getElementById('player-timeline');
+const seekbar = document.getElementById('seekbar');
+
+// Expand on click
 bottomPlayerDiv.addEventListener('click', (e) => {
     e.stopPropagation();
     bottomPlayerDiv.classList.add('expanded');
 });
 
+// Collapse when clicking outside
 document.addEventListener('click', (e) => {
     if (!bottomPlayerDiv.contains(e.target)) {
         bottomPlayerDiv.classList.remove('expanded');
     }
 });
 
+// Sync seekbar with current audio
 setInterval(() => {
-    const currentAudio = visibleSongs[currentSongIndex];
+    const currentAudio = songs[currentSongIndex];
     if (currentAudio && !currentAudio.paused) {
         seekbar.max = currentAudio.duration;
         seekbar.value = currentAudio.currentTime;
     }
 }, 300);
 
+// Seek control
 seekbar.addEventListener('input', () => {
-    const currentAudio = visibleSongs[currentSongIndex];
+    const currentAudio = songs[currentSongIndex];
     if (currentAudio) {
         currentAudio.currentTime = seekbar.value;
     }
 });
 
+installButton.addEventListener('click', () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(choiceResult => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
 
-// === 2. Shuffle Button in Title Bar ===
-const titleBar = document.querySelector('header p');
-const buttonBar = document.createElement('div');
-buttonBar.style.display = 'flex';
-buttonBar.style.alignItems = 'center';
-buttonBar.style.marginLeft = 'auto';
+                // Request fullscreen after install prompt is accepted
+                const body = document.body;
+                if (body.requestFullscreen) {
+                    body.requestFullscreen();
+                } else if (body.webkitRequestFullscreen) {
+                    body.webkitRequestFullscreen();
+                } else if (body.msRequestFullscreen) {
+                    body.msRequestFullscreen();
+                }
 
-const shuffleBtn = document.createElement('button');
-shuffleBtn.textContent = '🔀 Shuffle';
-shuffleBtn.style.fontSize = '16px';
-
-buttonBar.appendChild(shuffleBtn);
-titleBar.parentElement.style.display = 'flex';
-titleBar.parentElement.style.alignItems = 'center';
-titleBar.parentElement.appendChild(buttonBar);
-
-// === 4. Shuffle Visible Songs ===
-shuffleBtn.addEventListener('click', () => {
-    const container = document.querySelector('.Songs-Container');
-    const visibleSongs = Array.from(container.querySelectorAll('.Songs')).filter(s => s.style.display !== 'none');
-
-    const shuffled = visibleSongs.sort(() => Math.random() - 0.5);
-    shuffled.forEach(song => container.appendChild(song));
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+        });
+    }
 });
