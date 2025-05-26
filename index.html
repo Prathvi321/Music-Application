@@ -10,13 +10,11 @@
         content="music app, stream music, playlists, audio player, music streaming, new songs, artists, music discovery">
     <meta name="author" content="Your App Name">
 
-    <!-- Open Graph for Facebook/LinkedIn -->
     <meta property="og:title" content="Your Music App Name">
     <meta property="og:description"
         content="Stream your favorite tracks and discover new music. Curate playlists and enjoy personalized listening.">
     <meta property="og:url" content="https://songsbyprathvi.netlify.app/">
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Your Music App Name">
     <meta name="twitter:description" content="Stream, discover, and share your favorite music.">
@@ -24,961 +22,866 @@
 
     <link rel="icon" href="icons8-headphones-96.png" type="image/x-icon">
     <title>Music App by Prathvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
+        /* Custom CSS for gradient background and animations */
         body {
-            background: linear-gradient(135deg, red, rgb(248, 99, 0), blue);
+            background: linear-gradient(135deg, #ef4444, #f97316, #3b82f6);
+            /* Red, Orange, Blue gradient */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            color: #333;
         }
 
-        header {
-            background-color: #ffffff;
-            padding: 20px;
-            padding-top: 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        /* Keyframe animation for search input border */
+        @keyframes border-animation {
+            0% {
+                border-color: #f87171;
+            }
 
-        .search-container {
-            max-width: 800px;
-            margin: 0 auto;
+            50% {
+                border-color: #fb923c;
+            }
+
+            100% {
+                border-color: #60a5fa;
+            }
         }
 
         #searchInput {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #ddd;
-            border-radius: 25px;
-            animation: border-animation 2s infinite;
-            font-size: 16px;
-            outline: none;
+            animation: border-animation 2s infinite alternate;
+            /* Apply animation */
         }
 
-        .Songs-Container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            height: auto;
-            gap: 8px;
-            margin-bottom: 70px;
-        }
-
-        .Songs {
-            width: 350px;
-            height: 60px;
-            background-color: white;
-            border-radius: 10px;
-            display: flex;
-            margin-left: 4px;
-        }
-
-        .song-tile {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        img {
-            height: 60px;
-            width: 60px;
-            object-fit: cover;
-            border-radius: 10px 0px 0px 10px;
-            padding: 1px;
-        }
-
-        .songdetail {
-            text-align: start;
-            font-weight: 500;
-            padding-left: 2px;
-            padding-right: 2px;
-            background-color: rgb(87, 87, 87);
-            width: 288px;
-            color: white;
-            height: 18px;
-            margin-top: 2px;
-            border-radius: 0px 10px 0px 0px;
-        }
-
-        audio {
-            height: 40px;
-            width: 288px;
-            border-radius: 0px 0px 10px 0px;
-            margin-bottom: 1px;
-            background-color: rgba(128, 128, 128, 0.116);
-        }
-
-        audio::-webkit-media-controls-mute-button {
-            display: none;
-        }
-
-        audio::-webkit-media-controls-volume-slider {
-            width: 100%;
-        }
-
-        audio::-webkit-media-controls-timeline {
-            width: 260px;
-        }
-
+        /* Custom styles for audio controls to hide default elements */
+        audio::-webkit-media-controls-mute-button,
+        audio::-webkit-media-controls-volume-slider,
         audio::-webkit-media-controls-download-button {
             display: none;
         }
 
-        h1 {
-            padding: 10px;
-            color: white;
-            font-size: 22px;
-        }
-
-        header p {
-            text-align: center;
-            padding: 10px;
-            font-size: 22px;
-        }
-
-        #bottom-music-player {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #ffffff;
-            color: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            padding-bottom: 10px;
-        }
-
-        #player-song-details {
-            width: 260px;
-        }
-
-        #player-song {
-            width: 50px;
-            height: 50px;
-        }
-
-        #player-song-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-            margin-right: 5px;
-        }
-
-        button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            margin: 2px;
-            filter: grayscale(100%);
-        }
-
-        button img {
-            width: 20px;
-            height: 20px;
-        }
-
-        #bottom-music-player {
-            flex-direction: column;
-            gap: 5px;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        #player-main {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            width: 100%;
-        }
-
-        #player-timeline input[type="range"] {
-            width: 100%;
-        }
-
+        /* Ensure the seekbar is always visible when player is expanded */
         #bottom-music-player.expanded #player-timeline {
             display: block !important;
+        }
+
+        /* Style for the currently playing song tile */
+        .playing-song {
+            transform: scale(1.02);
+            /* Slightly larger */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+            /* White glow */
+            border: 2px solid #fff;
+            /* White border */
+        }
+
+        /* Loader specific styles */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none; /* Hidden by default */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 
-<body>
-    <header>
-        <p>Musics</p>
-        <div class="search-container">
-            <input id="searchInput" placeholder="Search song..." type="text" />
+<body class="antialiased">
+    <header class="bg-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between">
+            <p class="text-3xl font-extrabold text-gray-800 mb-4 sm:mb-0">Musics</p>
+            <div class="search-container w-full sm:w-auto">
+                <input id="searchInput" type="text" placeholder="Search song..."
+                    class="w-full px-5 py-2 border-2 border-gray-300 rounded-full text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300" />
+            </div>
         </div>
     </header>
-    <div style="height: 10px;"></div>
-    <div class="Songs-Container">
-        <div class="Songs" data-keywords="punjabi">
-            <img src="Song Image/one love.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>One Love By Shubh</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/one love.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="punjabi hiphop">
-            <img src="Song Image/admirin.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Admirin by karan aujalaya</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/admirin.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="relaxing love benagli">
-            <img src="Song Image/ami tomake.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Ami Tomake MC HeadShot</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/ami tomake.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="pooja krishna hindi">
-            <img src="Song Image/thakre kare ae thik.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Thakare Kare ae Thik</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/thakare kare ae thik.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="pooja hindi">
-            <img src="Song Image/epic bajrang baan.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Epic Bajrang Baan by Agam Agrawal</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/bajrang baan.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Relaxing hindi love">
-            <img src="Song Image/kasturi.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Kasturi</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/kasturi.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Relaxing south kannad tamil telgu love">
-            <img src="Song Image/chattumuli.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Chattumuli</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/chatumale.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="haryana punjabi badmoshi Dhanda Nyoliwala ">
-            <img src="Song Image/russian bandana.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Russian Bandana by Dhanda Nyoliwala</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Russian Bandana - Dhanda Nyoliwala(MixJio.In).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords=" punjabi love Tresher">
-            <img src="Song Image/punjabi kompa.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Punjabi Kompa</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Punjabi Kompa.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords=" Hindi love Relaxing">
-            <img src="Song Image/mann mera.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Mann Mera</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/mann mera.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords=" hindi love once upon a time in mumbai">
-            <img src="Song Image/ye tune kya kiya.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Ye tune Kya Kiya</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/ye tune kya kiya.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love Arijit singh Guddu Rangeela">
-            <img src="Song Image/sooiyan.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Sooiyan</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/sooiyan.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love Diljit Dosanj punjabi">
-            <img src="Song Image/lemonade.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Lemonade</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/lemonade.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="english arctic monkey">
-            <img src="Song Image/do i wanna know.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Do i Wanna Know</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/do i wanna know.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love Arijit singh zarror jarror punjabi">
-            <img src="Song Image/zaroor.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Zaroor</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/zarror.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love atif aslam ajab prem ki ghazab kahani">
-            <img src="Song Image/tu jane na.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Tu jane na </p>
-                </div>
-                <audio controls>
-                    <source src="Songs/tu jane na.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love relaxing">
-            <img src="Song Image/dil tu jaan tu.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Dil tu jaan tu </p>
-                </div>
-                <audio controls>
-                    <source src="Songs/dil tu jaa tu.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love Ap dhillon punjabi">
-            <img src="Song Image/with you.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>With You by Ap Dhillon</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/With You Ap Dhillon 128 Kbps.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="haryana gym">
-            <img src="Song Image/gym de shooke.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Gym De Shokeen</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Gym De Shokeen.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="haryana love">
-            <img src="Song Image/baba ji baba ji.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Baba ji Baba ji</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Sapna Choudhary _ Baba Ji (Official Video)  Vishu Puthi   Haryanvi Song.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="haryana gym dhanda Nyoliwala">
-            <img src="Song Image/knife brows.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Knife Brows</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Dhanda Nyoliwala - Knife Brows (Official Audio).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="punjabi Ap dhillon gym">
-            <img src="Song Image/old money.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Old Money</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Old Money.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="english most famous trnding">
-            <img src="Song Image/kolaveri.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Why This Kolaveri Di</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/3 - Why This Kolaveri Di Official Video  Dhanush  Anirudh Ravichander  Shruti Haasan.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love hindi sharukh khan">
-            <img src="Song Image/haule haule.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Haule Haule</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/Haule Haule - Full Song  Rab Ne Bana Di Jodi  Shah Rukh Khan  Anushka Sharma  Sukhwinder Singh.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="punjabi trending gym">
-            <img src="Song Image/born to shine.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Born To Shine</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Diljit Dosanjh_ Born To Shine (Audio) G.O.A.T.  Latest Punjabi Song 2020.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="pooja krishna">
-            <img src="Song Image/nagar nand ji na lal.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Nagar Nand ji na lal</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Naagar Nandji Na Laal  Aditya Gadhvi  Ft. Kinjal Rajpriya.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="punjabi gym trending">
-            <img src="Song Image/da da dasse.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Da Da Dasse</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/Da Da Dasse - Full Video  Udta Punjab  Amit Trivedi  Shellee  Kanika Kapoor  Babu Haabi.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="pooja gujrati krishna">
-            <img src="Song Image/Savariya Parnaye.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Savariya Parnaye</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Savariya Parnaye.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="hindi arpit bala">
-            <img src="Song Image/maharani.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Maharani</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/Maharani - Karun, Lambo Drive, Arpit Bala & Revo Lekhak (Official Music Video)  Qabool Hai.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Punjabi Diljit Dosanj">
-            <img src="Song Image/Goat.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Goat</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Diljit Dosanjh - G.O.A.T. (Official Music Video).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="russian gym">
-            <img src="Song Image/hqdefault.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Буйно голова</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Буйно голова.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love relaxing hindi">
-            <img src="Song Image/o meri lila.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>O meri Laila</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/O Meri Laila - Lyrical  Laila Majnu  Atif Aslam & Jyotica Tangri  Avinash Tiwary & Tripti Dimri.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="gym hindi ">
-            <img src="Song Image/once upon a time.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Once upon a time in Mumbai</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/Once Upon A Time Video  VIKRAM  Kamal Haasan  Anirudh Ravichander  Lokesh Kanagaraj.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="english gym">
-            <img src="Song Image/family afair.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Family Affair</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Family Affair (Radio Edit).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="english gym">
-            <img src="Song Image/way down.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Way Down we Go</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Vietsub  Way Down We Go - KALEO  Lyrics Video.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="hindi relaxing">
-            <img src="Song Image/tujhe aksa beach ghuma du.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Tujhe Aksa beach ghuma du</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Tujhe Aksa Beach Ghuma Du (Full Song) Film - God Tussi Great Ho.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="punjabi gym">
-            <img src="Song Image/sikh kom.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Sikh Kom nu Mann Bada</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Sikh Kaum Nu Maan Bada Jagtar Haware te  - KAM LOHGARH & KEWAL SINGH MEHTA.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="punjabi gym love diljit Dosanj">
-            <img src="Song Image/tension.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Tension</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Diljit Dosanjh_ Tension (Official Music Video) Advisory.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="love hindi relaxing aab kuch hosh nahi hai">
-            <img src="Song Image/paro.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Paro</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Paro - @adityarikhari  UNPLG'd.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="english gym">
-            <img src="Song Image/hypnotyse.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Hypnotise</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/The Notorious B.I.G. - Hypnotize (Official Audio).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="English gym">
-            <img src="Song Image/happy antion.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Happy Nation</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Ace of Base - Happy Nation (Lyrics).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="english gym 6 days">
-            <img src="Song Image/six days.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Six Days</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Tokyo Drift - Six Days lyrics Edit.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="hindi Azad new item song">
-            <img src="Song Image/uyi amma.webp">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Uyi Amma</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/Uyi Amma - Azaad  Aaman Devgan, Rasha Thadani  Madhubanti Bagchi,Amit Trivedi,Amitabh Bhattacharya.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="hindi new masoom sharma khatola">
-            <img src="Song Image/khatola.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Khatola</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/2 Khatole _ MASOOM SHARMA  Manjeet Mor, Chahal Saab, Vikash Rajana  New Haryanvi Song 2024.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="english Phonk Funk gym">
-            <img src="Song Image/passo bem soloto.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Passo bem Soloto</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/ATLXS - PASSO BEM SOLTO (SLOWED).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="hanuman kind gym english">
-            <img src="Song Image/run it up.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Run It Up</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Hanumankind - Run It Up ( Prod. By Kalmi )  (Official Music Video).mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="eninem gym english">
-            <img src="Song Image/without me.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Without Me</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Eminem - Without Me (Official Music Video).mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi Shoorveer">
-            <img src="Song Image/shoorveer 3 shivaji.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Shoorveer 3 Shivaji</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/SHOORVEER 3 - A Tribute to छतरपत शवज महरज  Rapperiya Baalam Ft. Shambho I Meetu Solanki.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi Shoorveer">
-            <img src="Song Image/shoorveer.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Shoorveer Maharana Pratap</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/SHOORVEER - A Tribute to महरण परतप ज   Rapperiya Baalam  Rajneesh Jaipuri  Honey Trouper.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi Shoorveer">
-            <img src="Song Image/prathvi raj.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Prithvi Raj</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/SHOORVEER  tribute to Samrat Prithviraj Chauhan  Rapperiya Baalam Jagirdar RV Rajneesh Jaipuri.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi Shoorveer">
-            <img src="Song Image/shoorveer sambhaji.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Sambha ji</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/SHOORVEER  A Tribute to छतरपत सभज महरज   Rapperiya Baalam Ft. Jagirdar RV I Cyli Khare.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi Shoorveer">
-            <img src="Song Image/rana sanga.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Shoorveer Rana Sanga</p>
-                </div>
-                <audio controls>
-                    <source
-                        src="Songs/SHOORVEER Tribute to RANA SANGA I Rapperiya Baalam ft. Rajneesh Jaipuri I Jagirdar RV I M Three.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Russian Gym fight practice">
-            <img src="Song Image/bot kak to kak.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Bot kak to kak</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/اغنية روسية مطلوبة - بوت كاك تو تاك asanrap - Шома тигр (bot kak to take).mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="English Gym Trending">
-            <img src="Song Image/paris paloma labour.webp">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Paris Paloma Labour</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Paris Paloma - LABOUR (the cacophony) [Official Lyric Video].mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi Badmashi GymTrending">
-            <img src="Song Image/chore barbad.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Chore Albadi Laath Saab</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Chore Albadi  Laath Saab   Incomparable EP  2k24  Haryanvi Music.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi love relaxing Trending">
-            <img src="Song Image/dooriyan.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Dooriyan</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/DOORIYAN - Full Audio Song - Love Aaj Kal  Saif Ali Khan  Mohit Chauhan  Pritam.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi love relaxing Trending">
-            <img src="Song Image/be intehaan.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Be Intehaan</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Be Intehaan - Song Video  Race 2 I Saif Ali Khan & Deepika Padukone  Atif & Sunidhi  Pritam.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-        <div class="Songs" data-keywords="Hindi love relaxing Trending">
-            <img src="Song Image/tum ho.avif">
-            <div class="song-tile">
-                <div class="songdetail">
-                    <p>Tum Ho</p>
-                </div>
-                <audio controls>
-                    <source src="Songs/Rockstar_ Tum Ho Lyrical Video Song  Ranbir Kapoor  Nargis Fakhri  T-Series.mp3"
-                        type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
-        </div>
-    </div>
-    <script>
-        // Add bottom music player in index.html
-        const bottomPlayer = document.createElement('div');
-        bottomPlayer.id = 'bottom-music-player';
-        bottomPlayer.innerHTML = `
-    <div id="player-main">
-        <img id="player-song-img" src="">
-        <div id="player-song-details">
-            <p id="player-song-title">Title</p>
-        </div>
-        <button id="prev-song">⏮️</button>
-        <button id="play-pause">▶️</button>
-        <button id="next-song">⏭️</button>
-    </div>
-    <div id="player-timeline" style="display: none; width: 100%;">
-        <input type="range" id="seekbar" value="0" step="1" min="0" style="width: 100%;">
-    </div>
-`;
-        document.body.appendChild(bottomPlayer);
 
+    <main class="flex-grow p-4">
+        <div id="songsContainer" class="flex flex-wrap justify-center gap-4 py-4 mb-20">
+            </div>
+        <div id="loader" class="loader"></div>
+    </main>
+
+    <div id="bottom-music-player"
+        class="fixed bottom-0 left-0 w-full bg-gray-900 text-white p-3 flex flex-col items-center shadow-lg transition-all duration-300 ease-in-out z-50 rounded-t-xl">
+        <div id="player-main" class="flex items-center justify-between w-full max-w-2xl px-2">
+            <img id="player-song-img" src="https://placehold.co/50x50/cccccc/ffffff?text=No+Song" alt="Song Cover"
+                class="w-12 h-12 rounded-md mr-3 object-cover shadow-md">
+            <div id="player-song-details" class="flex-grow text-left truncate">
+                <p id="player-song-title" class="text-lg font-semibold truncate">No song playing</p>
+                <p id="player-artist-name" class="text-sm text-gray-400 truncate">Unknown Artist</p>
+            </div>
+            <div class="flex items-center space-x-2 ml-4">
+                <button id="prev-song"
+                    class="p-2 rounded-full hover:bg-gray-700 transition-colors duration-200 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd"
+                            d="M19.5 2.25a.75.75 0 0 0-.75.75v9a.75.75 0 0 0 1.5 0V3a.75.75 0 0 0-.75-.75ZM12.75 2.25a.75.75 0 0 0-.75.75v9a.75.75 0 0 0 1.5 0V3a.75.75 0 0 0-.75-.75ZM5.25 2.25a.75.75 0 0 0-.75.75v9a.75.75 0 0 0 1.5 0V3a.75.75 0 0 0-.75-.75ZM2.25 9.75a.75.75 0 0 0 0 1.5h19.5a.75.75 0 0 0 0-1.5H2.25Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <button id="play-pause"
+                    class="p-3 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors duration-200 focus:outline-none shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                        <path fill-rule="evenodd"
+                            d="M4.5 5.653c0-1.426 1.529-2.38 2.79-1.613l11.54 6.348c1.26 1.26 1.26 3.324 0 4.584L7.29 20.353c-1.261.767-2.79-.187-2.79-1.613V5.653Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <button id="next-song"
+                    class="p-2 rounded-full hover:bg-gray-700 transition-colors duration-200 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd"
+                            d="M4.5 2.25a.75.75 0 0 0-.75.75v9a.75.75 0 0 0 1.5 0V3a.75.75 0 0 0-.75-.75ZM11.25 2.25a.75.75 0 0 0-.75.75v9a.75.75 0 0 0 1.5 0V3a.75.75 0 0 0-.75-.75ZM18 2.25a.75.75 0 0 0-.75.75v9a.75.75 0 0 0 1.5 0V3a.75.75 0 0 0-.75-.75ZM2.25 9.75a.75.75 0 0 0 0 1.5h19.5a.75.75 0 0 0 0-1.5H2.25Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="player-timeline" class="w-full max-w-2xl mt-2 hidden">
+            <input type="range" id="seekbar" value="0" step="0.1" min="0"
+                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+        </div>
+    </div>
+
+    <button id="installButton"
+        class="fixed bottom-24 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hidden z-50 hover:bg-green-600 transition-colors duration-300">
+        Install App
+    </button>
+
+    <script>
+        // IMPORTANT: Ensure all image and audio file paths are correct relative to your HTML file.
+        // For example, 'Song Image/one love.avif' means there should be a folder named 'Song Image'
+        // in the same directory as this HTML file, containing 'one love.avif'.
+        // Also, ensure your audio files are in a widely supported format like MP3.
+
+        const songs = [
+            {
+                title: "One Love",
+                artist: "Shubh",
+                image: "Song Image/one love.avif",
+                audio: "Songs/one love.mp3",
+                keywords: "punjabi"
+            },
+            {
+                title: "Admirin",
+                artist: "Karan Aujla",
+                image: "Song Image/admirin.avif",
+                audio: "Songs/admirin.mp3",
+                keywords: "punjabi hiphop"
+            },
+            {
+                title: "Ami Tomake",
+                artist: "MC HeadShot",
+                image: "Song Image/ami tomake.avif",
+                audio: "Songs/ami tomake.mp3",
+                keywords: "relaxing love bengali"
+            },
+            {
+                title: "Thakare Kare Ae Thik",
+                artist: "Unknown",
+                image: "Song Image/thakre kare ae thik.avif",
+                audio: "Songs/thakare kare ae thik.mp3",
+                keywords: "pooja krishna hindi"
+            },
+            {
+                title: "Epic Bajrang Baan",
+                artist: "Agam Agrawal",
+                image: "Song Image/epic bajrang baan.avif",
+                audio: "Songs/bajrang baan.mp3",
+                keywords: "pooja hindi"
+            },
+            {
+                title: "Kasturi",
+                artist: "Unknown",
+                image: "Song Image/kasturi.avif",
+                audio: "Songs/kasturi.mp3",
+                keywords: "relaxing hindi love"
+            },
+            {
+                title: "Chattumuli",
+                artist: "Unknown",
+                image: "Song Image/chattumuli.avif",
+                audio: "Songs/chatumale.mp3",
+                keywords: "relaxing south kannad tamil telgu love"
+            },
+            {
+                title: "Russian Bandana",
+                artist: "Dhanda Nyoliwala",
+                image: "Song Image/russian bandana.avif",
+                audio: "Songs/Russian Bandana - Dhanda Nyoliwala(MixJio.In).mp3",
+                keywords: "haryana punjabi badmoshi Dhanda Nyoliwala"
+            },
+            {
+                title: "Punjabi Kompa",
+                artist: "Unknown",
+                image: "Song Image/punjabi kompa.avif",
+                audio: "Songs/Punjabi Kompa.mp3",
+                keywords: "punjabi love Tresher"
+            },
+            {
+                title: "Mann Mera",
+                artist: "Unknown",
+                image: "Song Image/mann mera.avif",
+                audio: "Songs/mann mera.mp3",
+                keywords: "hindi love relaxing"
+            },
+            {
+                title: "Ye Tune Kya Kiya",
+                artist: "Unknown",
+                image: "Song Image/ye tune kya kiya.avif",
+                audio: "Songs/ye tune kya kiya.mp3",
+                keywords: "hindi love once upon a time in mumbai"
+            },
+            {
+                title: "Sooiyan",
+                artist: "Arijit Singh",
+                image: "Song Image/sooiyan.avif",
+                audio: "Songs/sooiyan.mp3",
+                keywords: "love Arijit singh Guddu Rangeela"
+            },
+            {
+                title: "Lemonade",
+                artist: "Diljit Dosanjh",
+                image: "Song Image/lemonade.avif",
+                audio: "Songs/lemonade.mp3",
+                keywords: "love Diljit Dosanj punjabi"
+            },
+            {
+                title: "Do I Wanna Know",
+                artist: "Arctic Monkeys",
+                image: "Song Image/do i wanna know.avif",
+                audio: "Songs/do i wanna know.mp3",
+                keywords: "english arctic monkey"
+            },
+            {
+                title: "Zaroor",
+                artist: "Arijit Singh",
+                image: "Song Image/zaroor.avif",
+                audio: "Songs/zarror.mp3",
+                keywords: "love Arijit singh zarror jarror punjabi"
+            },
+            {
+                title: "Tu Jane Na",
+                artist: "Atif Aslam",
+                image: "Song Image/tu jane na.avif",
+                audio: "Songs/tu jane na.mp3",
+                keywords: "love atif aslam ajab prem ki ghazab kahani"
+            },
+            {
+                title: "Dil Tu Jaan Tu",
+                artist: "Unknown",
+                image: "Song Image/dil tu jaan tu.avif",
+                audio: "Songs/dil tu jaa tu.mp3",
+                keywords: "love relaxing"
+            },
+            {
+                title: "With You",
+                artist: "AP Dhillon",
+                image: "Song Image/with you.avif",
+                audio: "Songs/With You Ap Dhillon 128 Kbps.mp3",
+                keywords: "love Ap dhillon punjabi"
+            },
+            {
+                title: "Gym De Shokeen",
+                artist: "Unknown",
+                image: "Song Image/gym de shooke.avif",
+                audio: "Songs/Gym De Shokeen.mp3",
+                keywords: "haryana gym"
+            },
+            {
+                title: "Baba Ji Baba Ji",
+                artist: "Sapna Choudhary",
+                image: "Song Image/baba ji baba ji.avif",
+                audio: "Songs/Sapna Choudhary _ Baba Ji (Official Video)  Vishu Puthi   Haryanvi Song.mp3",
+                keywords: "haryana love"
+            },
+            {
+                title: "Knife Brows",
+                artist: "Dhanda Nyoliwala",
+                image: "Song Image/knife brows.avif",
+                audio: "Songs/Dhanda Nyoliwala - Knife Brows (Official Audio).mp3",
+                keywords: "haryana gym dhanda Nyoliwala"
+            },
+            {
+                title: "Old Money",
+                artist: "AP Dhillon",
+                image: "Song Image/old money.avif",
+                audio: "Songs/Old Money.mp3",
+                keywords: "punjabi Ap dhillon gym"
+            },
+            {
+                title: "Why This Kolaveri Di",
+                artist: "Dhanush",
+                image: "Song Image/kolaveri.avif",
+                audio: "Songs/3 - Why This Kolaveri Di Official Video  Dhanush  Anirudh Ravichander  Shruti Haasan.mp3",
+                keywords: "english most famous trending"
+            },
+            {
+                title: "Haule Haule",
+                artist: "Sukhwinder Singh",
+                image: "Song Image/haule haule.avif",
+                audio: "Songs/Haule Haule - Full Song  Rab Ne Bana Di Jodi  Shah Rukh Khan  Anushka Sharma  Sukhwinder Singh.mp3",
+                keywords: "love hindi sharukh khan"
+            },
+            {
+                title: "Born To Shine",
+                artist: "Diljit Dosanjh",
+                image: "Song Image/born to shine.avif",
+                audio: "Songs/Diljit Dosanjh_ Born To Shine (Audio) G.O.A.T.  Latest Punjabi Song 2020.mp3",
+                keywords: "punjabi trending gym"
+            },
+            {
+                title: "Nagar Nand Ji Na Lal",
+                artist: "Aditya Gadhvi",
+                image: "Song Image/nagar nand ji na lal.avif",
+                audio: "Songs/Naagar Nandji Na Laal  Aditya Gadhvi  Ft. Kinjal Rajpriya.mp3",
+                keywords: "pooja krishna"
+            },
+            {
+                title: "Da Da Dasse",
+                artist: "Amit Trivedi",
+                image: "Song Image/da da dasse.avif",
+                audio: "Songs/Da Da Dasse - Full Video  Udta Punjab  Amit Trivedi  Shellee  Kanika Kapoor  Babu Haabi.mp3",
+                keywords: "punjabi gym trending"
+            },
+            {
+                title: "Savariya Parnaye",
+                artist: "Unknown",
+                image: "Song Image/Savariya Parnaye.avif",
+                audio: "Songs/Savariya Parnaye.mp3",
+                keywords: "pooja gujrati krishna"
+            },
+            {
+                title: "Maharani",
+                artist: "Karun, Lambo Drive, Arpit Bala & Revo Lekhak",
+                image: "Song Image/maharani.avif",
+                audio: "Songs/Maharani - Karun, Lambo Drive, Arpit Bala & Revo Lekhak (Official Music Video)  Qabool Hai.mp3",
+                keywords: "hindi arpit bala"
+            },
+            {
+                title: "Goat",
+                artist: "Diljit Dosanjh",
+                image: "Song Image/Goat.avif",
+                audio: "Songs/Diljit Dosanjh - G.O.A.T. (Official Music Video).mp3",
+                keywords: "Punjabi Diljit Dosanj"
+            },
+            {
+                title: "Буйно голова",
+                artist: "Unknown",
+                image: "Song Image/hqdefault.avif",
+                audio: "Songs/Буйно голова.mp3",
+                keywords: "russian gym"
+            },
+            {
+                title: "O Meri Laila",
+                artist: "Atif Aslam & Jyotica Tangri",
+                image: "Song Image/o meri lila.avif",
+                audio: "Songs/O Meri Laila - Lyrical  Laila Majnu  Atif Aslam & Jyotica Tangri  Avinash Tiwary & Tripti Dimri.mp3",
+                keywords: "love relaxing hindi"
+            },
+            {
+                title: "Once Upon A Time In Mumbai",
+                artist: "Unknown",
+                image: "Song Image/once upon a time.avif",
+                audio: "Songs/Once Upon A Time Video  VIKRAM  Kamal Haasan  Anirudh Ravichander  Lokesh Kanagaraj.mp3",
+                keywords: "gym hindi"
+            },
+            {
+                title: "Family Affair",
+                artist: "Mary J. Blige",
+                image: "Song Image/family afair.avif",
+                audio: "Songs/Family Affair (Radio Edit).mp3",
+                keywords: "english gym"
+            },
+            {
+                title: "Way Down We Go",
+                artist: "KALEO",
+                image: "Song Image/way down.avif",
+                audio: "Songs/Vietsub  Way Down We Go - KALEO  Lyrics Video.mp3",
+                keywords: "english gym"
+            },
+            {
+                title: "Tujhe Aksa Beach Ghuma Du",
+                artist: "Unknown",
+                image: "Song Image/tujhe aksa beach ghuma du.avif",
+                audio: "Songs/Tujhe Aksa Beach Ghuma Du (Full Song) Film - God Tussi Great Ho.mp3",
+                keywords: "hindi relaxing"
+            },
+            {
+                title: "Sikh Kom Nu Mann Bada",
+                artist: "KAM LOHGARH & KEWAL SINGH MEHTA",
+                image: "Song Image/sikh kom.avif",
+                audio: "Songs/Sikh Kaum Nu Maan Bada Jagtar Haware te  - KAM LOHGARH & KEWAL SINGH MEHTA.mp3",
+                keywords: "punjabi gym"
+            },
+            {
+                title: "Tension",
+                artist: "Diljit Dosanjh",
+                image: "Song Image/tension.avif",
+                audio: "Songs/Diljit Dosanjh_ Tension (Official Music Video) Advisory.mp3",
+                keywords: "punjabi gym love diljit Dosanj"
+            },
+            {
+                title: "Paro",
+                artist: "@adityarikhari",
+                image: "Song Image/paro.avif",
+                audio: "Songs/Paro - @adityarikhari  UNPLG'd.mp3",
+                keywords: "love hindi relaxing aab kuch hosh nahi hai"
+            },
+            {
+                title: "Hypnotise",
+                artist: "The Notorious B.I.G.",
+                image: "Song Image/hypnotyse.avif",
+                audio: "Songs/The Notorious B.I.G. - Hypnotize (Official Audio).mp3",
+                keywords: "english gym"
+            },
+            {
+                title: "Happy Nation",
+                artist: "Ace of Base",
+                image: "Song Image/happy antion.avif",
+                audio: "Songs/Ace of Base - Happy Nation (Lyrics).mp3",
+                keywords: "english gym"
+            },
+            {
+                title: "Six Days",
+                artist: "DJ Shadow",
+                image: "Song Image/six days.avif",
+                audio: "Songs/Tokyo Drift - Six Days lyrics Edit.mp3",
+                keywords: "english gym 6 days"
+            },
+            {
+                title: "Uyi Amma",
+                artist: "Aaman Devgan, Rasha Thadani",
+                image: "Song Image/uyi amma.webp",
+                audio: "Songs/Uyi Amma - Azaad  Aaman Devgan, Rasha Thadani  Madhubanti Bagchi,Amit Trivedi,Amitabh Bhattacharya.mp3",
+                keywords: "hindi Azad new item song"
+            },
+            {
+                title: "Khatola",
+                artist: "MASOOM SHARMA",
+                image: "Song Image/khatola.avif",
+                audio: "Songs/2 Khatole _ MASOOM SHARMA  Manjeet Mor, Chahal Saab, Vikash Rajana  New Haryanvi Song 2024.mp3",
+                keywords: "hindi new masoom sharma khatola"
+            },
+            {
+                title: "Passo Bem Soloto",
+                artist: "ATLXS",
+                image: "Song Image/passo bem soloto.avif",
+                audio: "Songs/ATLXS - PASSO BEM SOLTO (SLOWED).mp3",
+                keywords: "english Phonk Funk gym"
+            },
+            {
+                title: "Run It Up",
+                artist: "Hanumankind",
+                image: "Song Image/run it up.avif",
+                audio: "Songs/Hanumankind - Run It Up ( Prod. By Kalmi )  (Official Music Video).mp3",
+                keywords: "hanuman kind gym english"
+            },
+            {
+                title: "Without Me",
+                artist: "Eminem",
+                image: "Song Image/without me.avif",
+                audio: "Songs/Eminem - Without Me (Official Music Video).mp3",
+                keywords: "eminem gym english"
+            },
+            {
+                title: "Shoorveer 3 Shivaji",
+                artist: "Rapperiya Baalam",
+                image: "Song Image/shoorveer 3 shivaji.avif",
+                audio: "Songs/SHOORVEER 3 - A Tribute to छतरपत शवज महरज  Rapperiya Baalam Ft. Shambho I Meetu Solanki.mp3",
+                keywords: "hindi shoorveer"
+            },
+            {
+                title: "Shoorveer Maharana Pratap",
+                artist: "Rapperiya Baalam",
+                image: "Song Image/shoorveer.avif",
+                audio: "Songs/SHOORVEER - A Tribute to महरण परतप ज   Rapperiya Baalam  Rajneesh Jaipuri  Honey Trouper.mp3",
+                keywords: "hindi shoorveer"
+            },
+            {
+                title: "Prithvi Raj",
+                artist: "Rapperiya Baalam",
+                image: "Song Image/prathvi raj.avif",
+                audio: "Songs/SHOORVEER  tribute to Samrat Prithviraj Chauhan  Rapperiya Baalam Jagirdar RV Rajneesh Jaipuri.mp3",
+                keywords: "hindi shoorveer"
+            },
+            {
+                title: "Sambha Ji",
+                artist: "Rapperiya Baalam",
+                image: "Song Image/shoorveer sambhaji.avif",
+                audio: "Songs/SHOORVEER  A Tribute to छतरपत सभज महरज   Rapperiya Baalam Ft. Jagirdar RV I Cyli Khare.mp3",
+                keywords: "hindi shoorveer"
+            },
+            {
+                title: "Shoorveer Rana Sanga",
+                artist: "Rapperiya Baalam",
+                image: "Song Image/rana sanga.avif",
+                audio: "Songs/SHOORVEER Tribute to RANA SANGA I Rapperiya Baalam ft. Rajneesh Jaipuri I Jagirdar RV I M Three.mp3",
+                keywords: "hindi shoorveer"
+            },
+            {
+                title: "Bot Kak To Kak",
+                artist: "asanrap - Шома тигр",
+                image: "Song Image/bot kak to kak.avif",
+                audio: "Songs/اغنية روسية مطلوبة - بوت كاك تو تاك asanrap - Шома тигр (bot kak to take).mp3",
+                keywords: "russian gym fight practice"
+            },
+            {
+                title: "Paris Paloma Labour",
+                artist: "Paris Paloma",
+                image: "Song Image/paris paloma labour.webp",
+                audio: "Songs/Paris Paloma - LABOUR (the cacophony) [Official Lyric Video].mp3",
+                keywords: "english gym trending"
+            },
+            {
+                title: "Chore Albadi Laath Saab",
+                artist: "Unknown",
+                image: "Song Image/chore barbad.avif",
+                audio: "Songs/Chore Albadi  Laath Saab   Incomparable EP  2k24  Haryanvi Music.mp3",
+                keywords: "hindi badmashi gym trending"
+            },
+            {
+                title: "Dooriyan",
+                artist: "Mohit Chauhan",
+                image: "Song Image/dooriyan.avif",
+                audio: "Songs/DOORIYAN - Full Audio Song - Love Aaj Kal  Saif Ali Khan  Mohit Chauhan  Pritam.mp3",
+                keywords: "hindi love relaxing trending"
+            },
+            {
+                title: "Be Intehaan",
+                artist: "Atif Aslam & Sunidhi Chauhan",
+                image: "Song Image/be intehaan.avif",
+                audio: "Songs/Be Intehaan - Song Video  Race 2 I Saif Ali Khan & Deepika Padukone  Atif & Sunidhi  Pritam.mp3",
+                keywords: "hindi love relaxing trending"
+            },
+            {
+                title: "Tum Ho",
+                artist: "Mohit Chauhan",
+                image: "Song Image/tum ho.avif",
+                audio: "Songs/Rockstar_ Tum Ho Lyrical Video Song  Ranbir Kapoor  Nargis Fakhri  T-Series.mp3",
+                keywords: "hindi love relaxing trending"
+            }
+        ];
+
+
+        const searchInput = document.getElementById('searchInput');
+        const songsContainer = document.getElementById('songsContainer');
+        const playerSongImg = document.getElementById('player-song-img');
+        const playerSongTitle = document.getElementById('player-song-title');
+        const playerArtistName = document.getElementById('player-artist-name');
+        const playPauseButton = document.getElementById('play-pause');
+        const prevSongButton = document.getElementById('prev-song');
+        const nextSongButton = document.getElementById('next-song');
+        const seekbar = document.getElementById('seekbar');
+        const bottomMusicPlayer = document.getElementById('bottom-music-player');
+        const installButton = document.getElementById('installButton');
+        const loader = document.getElementById('loader');
+
+        let currentAudio = new Audio(); // Use a single audio element for playback
+        let currentSongIndex = -1;
+        let filteredSongs = [...songs]; // Initialize with all songs
+        let songsPerPage = 15;
+        let loadedSongsCount = 0;
+        let isLoading = false;
+
+        // Function to append songs to the container
+        function appendSongs(songsToAppend) {
+            songsToAppend.forEach((song, index) => {
+                const songTile = document.createElement('div');
+                songTile.classList.add('song-tile-item', 'w-full', 'sm:w-72', 'md:w-80', 'bg-white', 'rounded-xl', 'shadow-lg', 'flex', 'items-center', 'overflow-hidden', 'cursor-pointer', 'transition-all', 'duration-300', 'hover:scale-105', 'hover:shadow-xl');
+                // Store original index for easy lookup, important for playing the correct song from the full list
+                songTile.dataset.originalIndex = songs.indexOf(song);
+                songTile.dataset.keywords = song.keywords.toLowerCase();
+
+                songTile.innerHTML = `
+                    <img src="${song.image}" alt="${song.title}" class="w-20 h-20 object-cover rounded-l-xl" onerror="this.onerror=null;this.src='https://placehold.co/50x50/cccccc/ffffff?text=No+Image';">
+                    <div class="flex-1 p-3 flex flex-col justify-center">
+                        <p class="text-lg font-semibold text-gray-800 truncate">${song.title}</p>
+                        <p class="text-sm text-gray-500 truncate">${song.artist}</p>
+                    </div>
+                    <button class="play-button p-3 text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                            <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.38 2.79-1.613l11.54 6.348c1.26 1.26 1.26 3.324 0 4.584L7.29 20.353c-1.261.767-2.79-.187-2.79-1.613V5.653Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+                songsContainer.appendChild(songTile);
+
+                const playButton = songTile.querySelector('.play-button');
+                playButton.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent the tile click from triggering
+                    playSong(song); // Pass the song object directly
+                });
+
+                // Make the entire tile clickable to play the song
+                songTile.addEventListener('click', () => {
+                    playSong(song); // Pass the song object directly
+                });
+            });
+        }
+
+        // Function to load more songs
+        function loadMoreSongs() {
+            if (isLoading) return; // Prevent multiple loads
+            isLoading = true;
+            loader.style.display = 'block'; // Show loader
+
+            setTimeout(() => { // Simulate network delay
+                const startIndex = loadedSongsCount;
+                const endIndex = Math.min(loadedSongsCount + songsPerPage, filteredSongs.length);
+                const songsToLoad = filteredSongs.slice(startIndex, endIndex);
+
+                appendSongs(songsToLoad);
+                loadedSongsCount = endIndex;
+                isLoading = false;
+                loader.style.display = 'none'; // Hide loader
+
+                // If all filtered songs are loaded, disconnect observer
+                if (loadedSongsCount >= filteredSongs.length) {
+                    observer.disconnect();
+                }
+            }, 500); // Adjust delay as needed
+        }
+
+        // Intersection Observer for infinite scrolling
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && loadedSongsCount < filteredSongs.length) {
+                loadMoreSongs();
+            }
+        }, {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // Trigger when 10% of the loader is visible
+        });
+
+        // Attach observer to the loader
+        observer.observe(loader);
+
+        // Initial load of songs
+        loadMoreSongs();
+
+        // Search functionality
+        searchInput.addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const searchWords = searchTerm.split(' ').filter(word => word.trim() !== '');
+
+            filteredSongs = songs.filter(song => {
+                const title = song.title.toLowerCase();
+                const artist = song.artist.toLowerCase();
+                const keywords = song.keywords.toLowerCase();
+
+                if (searchWords.length === 0) {
+                    return true; // Show all songs if search bar is empty
+                }
+
+                return searchWords.some(word =>
+                    title.includes(word) ||
+                    artist.includes(word) ||
+                    keywords.includes(word)
+                );
+            });
+
+            // Reset loaded songs count and re-render for search results
+            songsContainer.innerHTML = '';
+            loadedSongsCount = 0;
+            // Re-observe the loader if it was disconnected
+            // Ensure observer is re-attached only if there are more songs to load
+            if (loadedSongsCount < filteredSongs.length) {
+                 observer.unobserve(loader); // Disconnect first to avoid multiple observations
+                 observer.observe(loader);
+            } else {
+                observer.disconnect(); // Disconnect if no songs to load
+            }
+            loadMoreSongs(); // Load initial batch for search results
+        });
+
+        // Function to play a song
+        function playSong(song) {
+            // Pause any currently playing audio and remove 'playing-song' class
+            if (currentAudio && !currentAudio.paused) {
+                const currentlyPlayingTile = document.querySelector('.playing-song');
+                if (currentlyPlayingTile) {
+                    currentlyPlayingTile.classList.remove('playing-song');
+                    const currentPlayButton = currentlyPlayingTile.querySelector('.play-button svg');
+                    if (currentPlayButton) {
+                        currentPlayButton.innerHTML = `<path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.38 2.79-1.613l11.54 6.348c1.26 1.26 1.26 3.324 0 4.584L7.29 20.353c-1.261.767-2.79-.187-2.79-1.613V5.653Z" clip-rule="evenodd" />`;
+                    }
+                }
+            }
+
+            currentAudio.src = song.audio;
+            // Add error handling for audio loading
+            currentAudio.onerror = (e) => {
+                console.error(`Error loading audio: ${song.audio}. Please ensure the file exists at the correct path and is a supported format (e.g., MP3).`, e);
+                // Optionally, play the next song or show an error message to the user
+                // nextSongButton.click();
+            };
+
+            try {
+                // Play returns a Promise, so we catch its rejection
+                currentAudio.play().catch(error => {
+                    console.error("Error playing audio (Promise rejection):", error);
+                    if (error.name === 'NotSupportedError') {
+                        console.error("This audio format might not be supported by your browser, or the file is corrupted.");
+                    } else if (error.name === 'AbortError') {
+                        console.log("Audio playback was aborted (e.g., by another play request).");
+                    } else {
+                        console.error("An unexpected error occurred during audio playback.");
+                    }
+                });
+            } catch (error) {
+                // This catch block handles synchronous errors from play() call itself
+                console.error("Error attempting to play audio (synchronous):", error);
+            }
+
+            currentSongIndex = filteredSongs.indexOf(song); // Update index based on filtered list
+            updatePlayerDisplay(song);
+
+            // Add 'playing-song' class to the new current song tile
+            // Use the original index from the song object to find the correct tile
+            const newPlayingTile = document.querySelector(`.song-tile-item[data-original-index="${songs.indexOf(song)}"]`);
+            if (newPlayingTile) {
+                newPlayingTile.classList.add('playing-song');
+                const newPlayButton = newPlayingTile.querySelector('.play-button svg');
+                if (newPlayButton) {
+                    newPlayButton.innerHTML = `<path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0a.75.75 0 0 1 .75-.75H16.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" />`;
+                }
+            }
+            playPauseButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0a.75.75 0 0 1 .75-.75H16.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" />
+            </svg>`;
+        }
+
+        // Update player display details
+        function updatePlayerDisplay(song) {
+            playerSongImg.src = song.image;
+            // Add onerror for player image too
+            playerSongImg.onerror = () => {
+                playerSongImg.src = 'https://placehold.co/50x50/cccccc/ffffff?text=No+Image';
+            };
+            playerSongTitle.innerText = song.title;
+            playerArtistName.innerText = song.artist;
+            bottomMusicPlayer.classList.add('expanded'); // Auto-expand when a song starts playing
+        }
+
+        // Play/Pause functionality for bottom player
+        playPauseButton.addEventListener('click', () => {
+            if (currentAudio.paused) {
+                currentAudio.play();
+                playPauseButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                    <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0a.75.75 0 0 1 .75-.75H16.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" />
+                </svg>`;
+            } else {
+                currentAudio.pause();
+                playPauseButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                    <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.38 2.79-1.613l11.54 6.348c1.26 1.26 1.26 3.324 0 4.584L7.29 20.353c-1.261.767-2.79-.187-2.79-1.613V5.653Z" clip-rule="evenodd" />
+                </svg>`;
+            }
+        });
+
+        // Next song functionality
+        nextSongButton.addEventListener('click', () => {
+            if (filteredSongs.length === 0) return;
+
+            currentSongIndex = (currentSongIndex + 1) % filteredSongs.length;
+            playSong(filteredSongs[currentSongIndex]);
+        });
+
+        // Previous song functionality
+        prevSongButton.addEventListener('click', () => {
+            if (filteredSongs.length === 0) return;
+
+            currentSongIndex = (currentSongIndex - 1 + filteredSongs.length) % filteredSongs.length;
+            playSong(filteredSongs[currentSongIndex]);
+        });
+
+        // Audio event listeners for the single currentAudio element
+        currentAudio.addEventListener('ended', () => {
+            // Automatically play the next song when current one ends
+            nextSongButton.click();
+        });
+
+        currentAudio.addEventListener('timeupdate', () => {
+            if (!seekbar.dragging) { // Update seekbar only if not being dragged by user
+                seekbar.value = currentAudio.currentTime;
+            }
+        });
+
+        currentAudio.addEventListener('loadedmetadata', () => {
+            seekbar.max = currentAudio.duration;
+            seekbar.value = currentAudio.currentTime;
+        });
+
+        // Seekbar functionality
+        seekbar.addEventListener('input', () => {
+            currentAudio.currentTime = seekbar.value;
+        });
+
+        // Expand/collapse bottom player on click
+        bottomMusicPlayer.addEventListener('click', (e) => {
+            // Only toggle if clicked on the main player area, not buttons/seekbar
+            if (!e.target.closest('#player-main') && !e.target.closest('#player-timeline')) {
+                bottomMusicPlayer.classList.toggle('expanded');
+            }
+        });
+
+        // PWA Installation Prompt
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.classList.remove('hidden'); // Show the install button
+        });
+
+        installButton.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(choiceResult => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                    installButton.classList.add('hidden'); // Hide after prompt
+                });
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            installButton.classList.add('hidden'); // Hide if already installed
+        });
+
+        // Removed Service Worker registration as it was causing issues in this environment.
+        // If you intend to use a Service Worker, ensure it's set up correctly for your deployment.
+        /*
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+        */
     </script>
-    <script src="script.js"></script>
 </body>
 
 </html>
