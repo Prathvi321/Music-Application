@@ -549,6 +549,55 @@
                 image: "Song Image/tum ho.avif",
                 audio: "Songs/Rockstar_ Tum Ho Lyrical Video Song  Ranbir Kapoor  Nargis Fakhri  T-Series.mp3",
                 keywords: "hindi love relaxing trending"
+            },
+            {
+                title: "Supreme",
+                artist: "Shubh",
+                image: "Song Image/supreme.jpg",
+                audio: "Songs/Shubh - Supreme (Official Music Video).mp3",
+                keywords: "hindi love Gym relaxing trending"
+            },
+            {
+                title: "Wavy",
+                artist: "Karan Aujila",
+                image: "Song Image/wavy.avif",
+                audio: "Songs/WAVY (OFFICIAL VIDEO) KARAN AUJLA  LATEST PUNJABI SONGS 2024.mp3",
+                keywords: "hindi love relaxing trending"
+            },
+            {
+                title: "52 Bars",
+                artist: "Karan Aujila",
+                image: "Song Image/52Bars.jpg",
+                audio: "Songs/52 Bars  (Official Video) Karan Aujla  Ikky  Four You EP  First Song  Latest Punjabi Songs 2023.mp3",
+                keywords: "hindi love relaxing trending"
+            },
+            {
+                title: "Maand Pari",
+                artist: "Bayaan, Hasan Raheem, Rovalio",
+                image: "Song Image/maand pari.avif",
+                audio: "Songs/Jo Tu Nahi To Aisa Main Chehra Maand Slowed and Reverb.mp3",
+                keywords: "hindi love relaxing trending"
+            },
+            {
+                title: "Radha Ramanam",
+                artist: "Indresh Upadhyay",
+                image: "Song Image/Radha Ramanam.avif",
+                audio: "Songs/Jo Tu Nahi To Aisa Main Chehra Maand Slowed and Reverb.mp3",
+                keywords: "hindi love Pooja relaxing trending"
+            },
+            {
+                title: "Vrindavan Payaro",
+                artist: "Indresh Upadhyay",
+                image: "Song Image/Vrindavan payaro.avif",
+                audio: "Songs/Pyaro Vrindavan (Official Video)  Indresh Upadhyay Ji  B Praak  Mir Desai  Kripa Records.mp3",
+                keywords: "hindi love Pooja relaxing trending"
+            },
+            {
+                title: "Hanuman Chalisa",
+                artist: "Agam Agrawal",
+                image: "Song Image/epic hanuman chalisa.avif",
+                audio: "Songs/Agam - Epic Hanuman Chalisa  Hanuman most popular Bhajan  Original Composition.mp3",
+                keywords: "hindi love Pooja relaxing trending"
             }
         ];
 
@@ -792,7 +841,18 @@
             console.log('PWA was installed');
             installButton.classList.add('hidden'); // Hide if already installed
         });
-
+        // Register service worker for PWA installability and offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => {
+                console.log('Service Worker registered:', reg.scope);
+                })
+                .catch(err => {
+                console.warn('Service Worker registration failed:', err);
+                });
+            });
+        }
         // Initial load of all songs
         appendSongs(songs);
     </script>
