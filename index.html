@@ -21,7 +21,7 @@
     <meta name="twitter:image" content="https://yourdomain.com/assets/preview-image.jpg">
 
     <link rel="icon" href="icons8-headphones-96.png" type="image/x-icon">
-    <title>Music App by Prathvi</title>
+    <title>Musics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import "tailwindcss";
@@ -841,18 +841,6 @@
             console.log('PWA was installed');
             installButton.classList.add('hidden'); // Hide if already installed
         });
-        // Register service worker for PWA installability and offline support
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(reg => {
-                console.log('Service Worker registered:', reg.scope);
-                })
-                .catch(err => {
-                console.warn('Service Worker registration failed:', err);
-                });
-            });
-        }
         // Initial load of all songs
         appendSongs(songs);
     </script>
